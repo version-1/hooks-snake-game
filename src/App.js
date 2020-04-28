@@ -5,7 +5,8 @@ import StartButton from './components/StartButton';
 import MoveButton from './components/MoveButton';
 import './App.css';
 
-function App() {
+
+const App = () => {
   return (
     <div className="App">
       <header className="header">
