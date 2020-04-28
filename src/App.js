@@ -37,11 +37,62 @@ const StatusType = {
   gameover: 'gameover',
 }
 
+const DirectionType = {
+  up: 'up',
+  down: 'down',
+  right: 'right',
+  left: 'left'
+}
+
+const OppositeDirectionType = {
+  up: 'down',
+  down: 'up',
+  right: 'left',
+  left: 'right'
+}
+
+const DirectionTypeDelta = {
+  up: ({ x, y }) => ({ x, y: y - 1 }),
+  down: ({ x, y }) => ({ x, y: y + 1 }),
+  right: ({ x, y }) => ({ x: x + 1, y }),
+  left: ({ x, y }) => ({ x: x - 1, y })
+}
+
 const initialGameState = {
   position: snakeStartPosition,
   fields: initialFields,
   tickId: null,
   status: StatusType.init,
+  direction: DirectionType.up,
+}
+
+const isConflict = (position) => (
+  position.y < 0
+  || position.x < 0
+  || position.y > fieldSize - 1
+  || position.x > fieldSize - 1
+)
+
+const handleMoving = (state) => {
+  const { fields, direction, position } = state
+  const newPosition = DirectionTypeDelta[direction](position)
+  if (!isConflict(newPosition)) {
+    // ゲーム続行
+    const newFields = [...fields]
+    newFields[position.y][position.x] = ''
+    newFields[newPosition.y][newPosition.x] = 'snake'
+    return {
+      ...state,
+      position: newPosition,
+      fields: newFields
+    }
+  }
+
+  return ({
+    ...state,
+    status: StatusType.gameover,
+    tickId: null
+  })
 }
 
 const App = () => {
@@ -51,31 +102,31 @@ const App = () => {
   const handleStart = () => {
     const tickId = setInterval(() => {
       setGameState((prevState) => {
-        const { fields, position, tickId } = prevState
-        const { x, y } = position
-        if (y < 1) {
-          clearInterval(tickId)
-          return {
-            ...prevState,
-            status: StatusType.gameover,
-            tickId: null
-          }
+        const newState = handleMoving(prevState)
+        if (newState.status === StatusType.gameover) {
+          clearInterval(prevState.tickId)
         }
-        const newPosition = { x, y: y - 1 }
-        const newFields = [...fields]
-        newFields[y][x] = ''
-        newFields[newPosition.y][newPosition.x] = 'snake'
-        return {
-          ...prevState,
-          position: newPosition,
-          fields: newFields
-        }
+        return newState
       })
     }, moveInterval)
     setGameState({
       ...gameState,
       status: StatusType.playing,
       tickId
+    })
+  }
+
+  const handleChangeDirection = (direction) => () => {
+    if (
+      !DirectionType[direction]
+      || gameState.status !== StatusType.playing
+      || OppositeDirectionType[gameState.direction] === direction
+    ) {
+      return
+    }
+    setGameState({
+      ...gameState,
+      direction
     })
   }
 
@@ -95,7 +146,7 @@ const App = () => {
           status={status}
           onStart={handleStart}
         />
-        <MoveButton />
+        <MoveButton handleChangeDirection={handleChangeDirection}/>
       </footer>
     </div>
   );
