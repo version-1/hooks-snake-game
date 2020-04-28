@@ -1,5 +1,5 @@
 .App {
-  max-width: 480px;
+  max-width: 490px;
   margin: auto;
   text-align: center;
 }
@@ -13,8 +13,12 @@
 
 .dots {
   box-sizing: border-box;
-  height: 16px;
-  min-width: 16px;
+  height: 14px;
+  min-width: 14px;
   background: black;
+}
+
+.snake {
+  background: white;
 }
 
