@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useCallback, useEffect, useState } from 'react';
 import Field from './components/Field';
 import Navigation from './components/Navigation';
 import StartButton from './components/StartButton';
@@ -6,7 +6,7 @@ import MoveButton from './components/MoveButton';
 import './App.css';
 
 const fieldSize = 35
-const moveInterval = 50 // 50ms
+const moveInterval = 100 // 50ms
 
 // 1行分のドット
 const getCols = () => new Array(fieldSize).fill("")
@@ -56,6 +56,13 @@ const DirectionTypeDelta = {
   down: ({ x, y }) => ({ x, y: y + 1 }),
   right: ({ x, y }) => ({ x: x + 1, y }),
   left: ({ x, y }) => ({ x: x - 1, y })
+}
+
+const DirectionKeyCodeMap = {
+  37: DirectionType.left,
+  38: DirectionType.up,
+  39: DirectionType.right,
+  40: DirectionType.down
 }
 
 const initialGameState = {
@@ -116,19 +123,33 @@ const App = () => {
     })
   }
 
-  const handleChangeDirection = (direction) => () => {
-    if (
-      !DirectionType[direction]
-      || gameState.status !== StatusType.playing
-      || OppositeDirectionType[gameState.direction] === direction
-    ) {
-      return
-    }
-    setGameState({
-      ...gameState,
-      direction
+  const handleChangeDirection = useCallback((setGameState) => (direction) => {
+    setGameState(prevState => {
+      if (
+        !DirectionType[direction]
+        || prevState.status !== StatusType.playing
+        || OppositeDirectionType[prevState.direction] === direction
+      ) {
+        return prevState
+      }
+      return {
+        ...prevState,
+        direction
+      }
     })
-  }
+  }, [])
+
+  useEffect(() => {
+    const handleKeyPress = (e) => {
+      const direction = DirectionKeyCodeMap[e.keyCode]
+      handleChangeDirection(setGameState)(direction)
+    }
+    document.addEventListener('keydown', (e) => handleKeyPress(e))
+
+    return function (){
+      document.removeEventListener('keydown', (e) => handleKeyPress(e))
+    }
+  }, [handleChangeDirection, setGameState])
 
   return (
     <div className="App">
@@ -146,7 +167,7 @@ const App = () => {
           status={status}
           onStart={handleStart}
         />
-        <MoveButton handleChangeDirection={handleChangeDirection}/>
+        <MoveButton handleChangeDirection={handleChangeDirection(setGameState)}/>
       </footer>
     </div>
   );
