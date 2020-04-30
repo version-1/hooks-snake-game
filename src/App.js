@@ -5,30 +5,8 @@ import StartButton from './components/StartButton';
 import MoveButton from './components/MoveButton';
 import './App.css';
 
-const fieldSize = 35
-const moveInterval = 100 // 50ms
-
-// 1行分のドット
-const getCols = () => new Array(fieldSize).fill("")
-
-// 縦のドット
-const initFields = () => {
-  const fields = []
-  for (let i = 0; i < fieldSize; i++) {
-    fields.push(getCols())
-  }
-  return fields
-}
-
-const initialFields = initFields()
-
-// へびの初期表示位置をセット
-const snakeStartPosition = {
-  x: Math.round(fieldSize / 2) - 1,
-  y: Math.round(fieldSize / 2) - 1
-}
-
-initialFields[snakeStartPosition.y][snakeStartPosition.x] = "snake"
+const FieldSize = 35
+const MoveInterval = 100 // 50ms
 
 const StatusType = {
   init: 'init',
@@ -51,6 +29,12 @@ const OppositeDirectionType = {
   left: 'right'
 }
 
+const DotType = {
+  none: '',
+  snake: 'snake',
+  food: 'food'
+}
+
 const DirectionTypeDelta = {
   up: ({ x, y }) => ({ x, y: y - 1 }),
   down: ({ x, y }) => ({ x, y: y + 1 }),
@@ -65,19 +49,56 @@ const DirectionKeyCodeMap = {
   40: DirectionType.down
 }
 
-const initialGameState = {
-  position: snakeStartPosition,
-  fields: initialFields,
+// へびの初期表示位置をセット
+const SnakeStartPosition = {
+  x: Math.round(FieldSize / 2) - 1,
+  y: Math.round(FieldSize / 2) - 1
+}
+
+const getRandomNum = (min, max) => {
+  return Math.floor(Math.random() * (max + 1 - min)) + min
+}
+
+const getFoodPosition = () => {
+  while(true) {
+    const pos = {
+      x: getRandomNum(1, FieldSize - 1),
+      y: getRandomNum(1, FieldSize - 1)
+    }
+    if (
+      pos.x !== SnakeStartPosition.x
+      || pos.y !== SnakeStartPosition.y
+    ) {
+      return pos
+    }
+  }
+}
+
+const initFields = () => {
+  const fields = []
+  for (let i = 0; i < FieldSize; i++) {
+    const cols = new Array(FieldSize).fill(DotType.none)
+    fields.push(cols)
+  }
+  const foodPos = getFoodPosition()
+  fields[SnakeStartPosition.y][SnakeStartPosition.x] = DotType.snake
+  fields[foodPos.y][foodPos.x] = DotType.food
+  return fields
+}
+
+const getInitialGameState = () => ({
+  position: SnakeStartPosition,
+  fields: initFields(),
   tickId: null,
   status: StatusType.init,
   direction: DirectionType.up,
-}
+})
 
 const isConflict = (position) => (
   position.y < 0
   || position.x < 0
-  || position.y > fieldSize - 1
-  || position.x > fieldSize - 1
+  || position.y > FieldSize - 1
+  || position.x > FieldSize - 1
 )
 
 const handleMoving = (state) => {
@@ -86,8 +107,8 @@ const handleMoving = (state) => {
   if (!isConflict(newPosition)) {
     // ゲーム続行
     const newFields = [...fields]
-    newFields[position.y][position.x] = ''
-    newFields[newPosition.y][newPosition.x] = 'snake'
+    newFields[position.y][position.x] = DotType.none
+    newFields[newPosition.y][newPosition.x] = DotType.snake
     return {
       ...state,
       position: newPosition,
@@ -103,7 +124,7 @@ const handleMoving = (state) => {
 }
 
 const App = () => {
-  const [gameState, setGameState] = useState(initialGameState)
+  const [gameState, setGameState] = useState(getInitialGameState())
   const { status, fields } = gameState
 
   const handleStart = () => {
@@ -115,12 +136,16 @@ const App = () => {
         }
         return newState
       })
-    }, moveInterval)
+    }, MoveInterval)
     setGameState({
       ...gameState,
       status: StatusType.playing,
       tickId
     })
+  }
+
+  const handleRestart = () => {
+    setGameState(getInitialGameState())
   }
 
   const handleChangeDirection = useCallback((setGameState) => (direction) => {
@@ -166,6 +191,7 @@ const App = () => {
         <StartButton
           status={status}
           onStart={handleStart}
+          onRestart={handleRestart}
         />
         <MoveButton handleChangeDirection={handleChangeDirection(setGameState)}/>
       </footer>

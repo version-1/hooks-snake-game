@@ -3,16 +3,16 @@ import React from 'react'
 const StatusText = {
   init: 'start',
   playing: 'stop',
-  gameover: 'gameover',
+  gameover: 'restart',
   suspended: 'start'
 }
 
-const StartButton = ({ status, onStart }) => {
+const StartButton = ({ status, onStart, onRestart }) => {
   const handleClick = () => {
     const _onClick = {
       init: onStart,
       playing: () => { /*do nothing */},
-      gameover: () => { /*do nothing */},
+      gameover: onRestart,
       supended: () => { /*do nothing */},
     }
     _onClick[status]()
