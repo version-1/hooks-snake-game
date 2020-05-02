@@ -114,8 +114,8 @@ const isConflict = (position) => (
   || position.x > FieldSize - 1
 )
 
-const handleMoving = (index, state) => {
-  const { length, history, fields, direction, position } = state
+const handleMoving = (direction, state) => {
+  const { length, history, fields, position } = state
   const newPosition = DirectionTypeDelta[direction](position)
   const newHistory = [position, ...history].slice(0, length)
   if (!isConflict(newPosition)) {
@@ -132,7 +132,6 @@ const handleMoving = (index, state) => {
 
     return {
       ...state,
-      index,
       status: StatusType.playing,
       history: newHistory,
       length: newLength,
@@ -148,60 +147,62 @@ const handleMoving = (index, state) => {
   })
 }
 
-let tickId = null
-let index = 0
-
 const App = () => {
   const [gameState, setGameState] = useState(getInitialGameState())
+  const [tick, setTick] = useState(0)
+  const [timer, setTimer] = useState()
+  const [direction, setDirection] = useState(DirectionType.up)
   const { status, fields } = gameState
 
-  const handleStart = () => {
-    tickId = setInterval(() => {
-      setGameState((prevState) => {
-        index++
-        if(index && index % 2 === 0) {
-          return prevState
-        }
-        const newState = handleMoving(index, prevState)
-        if (newState.status === StatusType.gameover) {
-          clearInterval(tickId)
-        }
-        return newState
-      })
+  useEffect(() => {
+    const timerId = setInterval(() => {
+      setTick(tick => tick + 1)
     }, MoveInterval)
+    setTimer(timerId)
+    return () => {
+      clearInterval(timerId)
+    }
+  }, [])
+
+  useEffect(() => {
+    if (gameState.status !== StatusType.playing) {
+      return
+    }
+    const newState = handleMoving(direction, gameState)
+    setGameState(newState)
+  }, [timer, direction, tick, setGameState]) // eslint-disable-line react-hooks/exhaustive-deps
+
+  const handleStart = () => {
+    setGameState(state => ({
+      ...state,
+      status: StatusType.playing
+    }))
   }
 
   const handleRestart = () => {
+    setDirection(DirectionType.up)
     setGameState(getInitialGameState())
   }
 
-  const handleChangeDirection = useCallback((setGameState) => (direction) => {
-    setGameState(prevState => {
-      if (
-        !DirectionType[direction]
-        || prevState.status !== StatusType.playing
-        || OppositeDirectionType[prevState.direction] === direction
-      ) {
-        return prevState
-      }
-      return {
-        ...prevState,
-        direction
-      }
-    })
-  }, [])
+  const handleChangeDirection = useCallback((newDirection) => {
+    if (
+      !DirectionType[newDirection]
+      || gameState.status !== StatusType.playing
+      || OppositeDirectionType[direction] === newDirection
+    ) {
+      return
+    }
+    setDirection(newDirection)
+  }, [direction, gameState.status, setDirection])
 
   useEffect(() => {
     const handleKeyPress = (e) => {
       const direction = DirectionKeyCodeMap[e.keyCode]
-      handleChangeDirection(setGameState)(direction)
+      handleChangeDirection(direction)
     }
+    document.removeEventListener('keydown', (e) => handleKeyPress(e))
     document.addEventListener('keydown', (e) => handleKeyPress(e))
-
-    return function (){
-      document.removeEventListener('keydown', (e) => handleKeyPress(e))
-    }
-  }, [handleChangeDirection, setGameState])
+  }, [handleChangeDirection])
 
   return (
     <div className="App">
@@ -220,7 +221,7 @@ const App = () => {
           onStart={handleStart}
           onRestart={handleRestart}
         />
-        <MoveButton handleChangeDirection={handleChangeDirection(setGameState)}/>
+        <MoveButton handleChangeDirection={handleChangeDirection}/>
       </footer>
     </div>
   );
