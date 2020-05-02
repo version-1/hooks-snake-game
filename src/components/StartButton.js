@@ -3,7 +3,7 @@ import React from 'react'
 const StatusText = {
   init: 'start',
   playing: 'stop',
-  gameover: 'restart',
+  gameover: 'gameover',
   suspended: 'start'
 }
 
