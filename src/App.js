@@ -59,19 +59,31 @@ const getRandomNum = (min, max) => {
   return Math.floor(Math.random() * (max + 1 - min)) + min
 }
 
-const getFoodPosition = () => {
+const getFoodPosition = (excludes) => {
   while(true) {
     const pos = {
-      x: getRandomNum(1, FieldSize - 1),
-      y: getRandomNum(1, FieldSize - 1)
+      x: getRandomNum(1, FieldSize - 2),
+      y: getRandomNum(1, FieldSize - 2)
     }
-    if (
-      pos.x !== SnakeStartPosition.x
-      || pos.y !== SnakeStartPosition.y
-    ) {
+    const check = excludes.every(item => (
+      pos.x !== item.x
+      || pos.y !== item.y
+    ))
+    if (check) {
       return pos
     }
   }
+}
+
+const setFood = (excludes, fields) => {
+  const foodPos = getFoodPosition(excludes)
+  fields[foodPos.y][foodPos.x] = DotType.food
+  return foodPos
+}
+
+const setSnake = (fields) => {
+  fields[SnakeStartPosition.y][SnakeStartPosition.x] = DotType.snake
+  return SnakeStartPosition
 }
 
 const initFields = () => {
@@ -80,14 +92,15 @@ const initFields = () => {
     const cols = new Array(FieldSize).fill(DotType.none)
     fields.push(cols)
   }
-  const foodPos = getFoodPosition()
-  fields[SnakeStartPosition.y][SnakeStartPosition.x] = DotType.snake
-  fields[foodPos.y][foodPos.x] = DotType.food
+  const snakePos = setSnake(fields)
+  setFood([snakePos], fields)
   return fields
 }
 
 const getInitialGameState = () => ({
   position: SnakeStartPosition,
+  history: [],
+  length: 1,
   fields: initFields(),
   tickId: null,
   status: StatusType.init,
@@ -101,16 +114,28 @@ const isConflict = (position) => (
   || position.x > FieldSize - 1
 )
 
-const handleMoving = (state) => {
-  const { fields, direction, position } = state
+const handleMoving = (index, state) => {
+  const { length, history, fields, direction, position } = state
   const newPosition = DirectionTypeDelta[direction](position)
+  const newHistory = [position, ...history].slice(0, length)
   if (!isConflict(newPosition)) {
     // ゲーム続行
     const newFields = [...fields]
-    newFields[position.y][position.x] = DotType.none
+    let newLength = length;
+    if (newFields[newPosition.y][newPosition.x] === DotType.food) {
+      setFood([newPosition, ...newHistory], newFields)
+      newLength = length + 1
+    }
+    const removingPos = newHistory.slice(-1)[0]
     newFields[newPosition.y][newPosition.x] = DotType.snake
+    newFields[removingPos.y][removingPos.x] = DotType.none
+
     return {
       ...state,
+      index,
+      status: StatusType.playing,
+      history: newHistory,
+      length: newLength,
       position: newPosition,
       fields: newFields
     }
@@ -123,25 +148,27 @@ const handleMoving = (state) => {
   })
 }
 
+let tickId = null
+let index = 0
+
 const App = () => {
   const [gameState, setGameState] = useState(getInitialGameState())
   const { status, fields } = gameState
 
   const handleStart = () => {
-    const tickId = setInterval(() => {
+    tickId = setInterval(() => {
       setGameState((prevState) => {
-        const newState = handleMoving(prevState)
+        index++
+        if(index && index % 2 === 0) {
+          return prevState
+        }
+        const newState = handleMoving(index, prevState)
         if (newState.status === StatusType.gameover) {
-          clearInterval(prevState.tickId)
+          clearInterval(tickId)
         }
         return newState
       })
     }, MoveInterval)
-    setGameState({
-      ...gameState,
-      status: StatusType.playing,
-      tickId
-    })
   }
 
   const handleRestart = () => {
