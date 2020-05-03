@@ -6,7 +6,14 @@ import MoveButton from './components/MoveButton';
 import './App.css';
 
 const FieldSize = 35
-const MoveInterval = 100 // 50ms
+const DefaultDifficulty = 3
+const IntervalList = [
+  1000,
+  550,
+  100,
+  50,
+  10
+]
 
 const StatusType = {
   init: 'init',
@@ -100,7 +107,8 @@ const initFields = () => {
 const getInitialGameState = () => ({
   position: SnakeStartPosition,
   history: [],
-  length: 1,
+  length: 3,
+  difficulty: DefaultDifficulty,
   fields: initFields(),
   tickId: null,
   status: StatusType.init,
@@ -147,22 +155,24 @@ const handleMoving = (direction, state) => {
   })
 }
 
+let handleKeyPress = null
+
 const App = () => {
   const [gameState, setGameState] = useState(getInitialGameState())
   const [tick, setTick] = useState(0)
   const [timer, setTimer] = useState()
   const [direction, setDirection] = useState(DirectionType.up)
-  const { status, fields } = gameState
+  const { status, fields, difficulty } = gameState
 
   useEffect(() => {
     const timerId = setInterval(() => {
       setTick(tick => tick + 1)
-    }, MoveInterval)
+    }, IntervalList[difficulty - 1])
     setTimer(timerId)
     return () => {
       clearInterval(timerId)
     }
-  }, [])
+  }, [difficulty])
 
   useEffect(() => {
     if (gameState.status !== StatusType.playing) {
@@ -187,21 +197,24 @@ const App = () => {
   const handleChangeDirection = useCallback((newDirection) => {
     if (
       !DirectionType[newDirection]
-      || gameState.status !== StatusType.playing
+      || status !== StatusType.playing
       || OppositeDirectionType[direction] === newDirection
+      || direction === newDirection
     ) {
       return
     }
     setDirection(newDirection)
-  }, [direction, gameState.status, setDirection])
+  }, [direction, status, setDirection])
 
   useEffect(() => {
-    const handleKeyPress = (e) => {
+    if(handleKeyPress) {
+      document.removeEventListener('keydown', handleKeyPress)
+    }
+    handleKeyPress = (e) => {
       const direction = DirectionKeyCodeMap[e.keyCode]
       handleChangeDirection(direction)
     }
-    document.removeEventListener('keydown', (e) => handleKeyPress(e))
-    document.addEventListener('keydown', (e) => handleKeyPress(e))
+    document.addEventListener('keydown', handleKeyPress)
   }, [handleChangeDirection])
 
   return (
@@ -210,7 +223,7 @@ const App = () => {
         <div className="title-container">
           <h1 className="title">Snake Game</h1>
         </div>
-        <Navigation />
+        <Navigation state={gameState}/>
       </header>
       <main className="main">
         <Field fields={fields}/>
