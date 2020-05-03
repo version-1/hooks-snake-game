@@ -107,7 +107,7 @@ const initFields = () => {
 const getInitialGameState = () => ({
   position: SnakeStartPosition,
   history: [],
-  length: 3,
+  length: 1,
   difficulty: DefaultDifficulty,
   fields: initFields(),
   tickId: null,
@@ -122,11 +122,18 @@ const isConflict = (position) => (
   || position.x > FieldSize - 1
 )
 
+const isEatingMe = (fields, newPosition) => {
+  return fields[newPosition.y][newPosition.x] === DotType.snake
+}
+
 const handleMoving = (direction, state) => {
   const { length, history, fields, position } = state
   const newPosition = DirectionTypeDelta[direction](position)
   const newHistory = [position, ...history].slice(0, length)
-  if (!isConflict(newPosition)) {
+  if (
+    !isConflict(newPosition)
+    && !isEatingMe(fields, newPosition)
+  ) {
     // ゲーム続行
     const newFields = [...fields]
     let newLength = length;
