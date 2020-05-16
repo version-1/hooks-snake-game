@@ -1,10 +1,10 @@
 import React from 'react'
 
 const StatusText = {
-  init: 'start',
-  playing: 'stop',
-  gameover: 'gameover',
-  suspended: 'start'
+  init: 'START',
+  playing: 'STOP',
+  gameover: 'GAME OVER',
+  suspended: 'START'
 }
 
 const StartButton = ({ status, onStart, onStop, onRestart }) => {
@@ -18,7 +18,7 @@ const StartButton = ({ status, onStart, onStop, onRestart }) => {
     _onClick[status]()
   }
   return <div className="button-start">
-    <button onClick={handleClick}>{StatusText[status]}</button>
+    <button className={`btn btn-${status}`} tabIndex={1} onClick={handleClick}>{StatusText[status]}</button>
   </div>
 }
 
