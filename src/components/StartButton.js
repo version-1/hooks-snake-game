@@ -7,13 +7,13 @@ const StatusText = {
   suspended: 'start'
 }
 
-const StartButton = ({ status, onStart, onRestart }) => {
+const StartButton = ({ status, onStart, onStop, onRestart }) => {
   const handleClick = () => {
     const _onClick = {
       init: onStart,
-      playing: () => { /*do nothing */},
+      playing: onStop,
       gameover: onRestart,
-      supended: () => { /*do nothing */},
+      suspended: onStart,
     }
     _onClick[status]()
   }

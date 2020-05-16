@@ -201,6 +201,10 @@ const App = () => {
     setGameState(getInitialGameState())
   }
 
+  const handleStop = () => {
+    setGameState(state => ({ ...state, status: StatusType.suspended }))
+  }
+
   const handleChangeDirection = useCallback((newDirection) => {
     if (
       !DirectionType[newDirection]
@@ -240,6 +244,7 @@ const App = () => {
           status={status}
           onStart={handleStart}
           onRestart={handleRestart}
+          onStop={handleStop}
         />
         <MoveButton handleChangeDirection={handleChangeDirection}/>
       </footer>
