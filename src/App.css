@@ -1,7 +1,18 @@
+
 .App {
   max-width: 315px;
   margin: auto;
   text-align: center;
+}
+
+.title-container {
+  border: 1px solid #0F1D1D80;
+}
+
+.title {
+  margin: 0;
+  padding: 8px;
+  font-size: 1.1rem;
 }
 
 .field {
@@ -15,7 +26,7 @@
   box-sizing: border-box;
   height: 9px;
   min-width: 9px;
-  background: black;
+  background: #0f1d1d;
 }
 
 .snake {
@@ -29,9 +40,78 @@
 .navigation {
   display: flex;
   justify-content: space-evenly;
+  color: white;
+  font-weight: bold;
+  background: #020705;
 }
 
 .navigation-item {
   padding: 16px;
+  display: flex;
+  align-items: center;
 }
+
+.navigation-item-number-container {
+  display: flex;
+  padding: 0 8px;
+  align-items: center;
+  margin-left: 8px;
+}
+
+.num-board {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background: #0f1d1d;
+  height: 48px;
+  width: 24px;
+}
+
+.difficulty-number {
+  margin-right: 8px;
+}
+
+.difficulty-button {
+  cursor: pointer;
+  width: 8px;
+  height: 8px;
+  border: 8px solid #0f1d1d;
+  margin: 8px;
+}
+
+.difficulty-button-container {
+  background: #0f1d1d;
+}
+.difficulty-button-container.disabled {
+  background: #020705;
+}
+
+.difficulty-up {
+  margin-top: 4px;
+  border-bottom: 8px solid #f0f0f050;
+  transition: all ease .5s;
+}
+.difficulty-up:hover {
+  transform: scale(1.1);
+  border-bottom: 8px solid white;
+}
+.difficulty-up:active {
+  transform: scale(.8);
+  opacity: .8
+}
+
+.difficulty-down {
+  margin-bottom: 4px;
+  border-top: 8px solid #f0f0f050;
+  transition: all ease .5s;
+}
+.difficulty-down:hover {
+  transform: scale(1.1);
+  border-top: 8px solid white;
+}
+.difficulty-down:active {
+  transform: scale(.8);
+  opacity: .8
+}
+
 
