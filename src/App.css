@@ -1,5 +1,5 @@
 .App {
-  max-width: 490px;
+  max-width: 315px;
   margin: auto;
   text-align: center;
 }
@@ -13,8 +13,8 @@
 
 .dots {
   box-sizing: border-box;
-  height: 14px;
-  min-width: 14px;
+  height: 9px;
+  min-width: 9px;
   background: black;
 }
 
