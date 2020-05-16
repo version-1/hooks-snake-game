@@ -1,25 +1,19 @@
-import React, { useCallback, useEffect, useState } from 'react';
-import Field from './components/Field';
-import Navigation from './components/Navigation';
-import StartButton from './components/StartButton';
-import MoveButton from './components/MoveButton';
-import './App.css';
+import React, { useCallback, useEffect, useMemo, useState } from 'react'
+import Field from './components/Field'
+import Navigation from './components/Navigation'
+import StartButton from './components/StartButton'
+import MoveButton from './components/MoveButton'
+import './App.css'
 
 const FieldSize = 35
 const DefaultDifficulty = 3
-const IntervalList = [
-  1000,
-  550,
-  100,
-  50,
-  10
-]
+const IntervalList = [500, 300, 100, 50, 10]
 
 const StatusType = {
   init: 'init',
   playing: 'playing',
   suspended: 'suspended',
-  gameover: 'gameover',
+  gameover: 'gameover'
 }
 
 const DirectionType = {
@@ -67,15 +61,12 @@ const getRandomNum = (min, max) => {
 }
 
 const getFoodPosition = (excludes) => {
-  while(true) {
+  while (true) {
     const pos = {
       x: getRandomNum(1, FieldSize - 2),
       y: getRandomNum(1, FieldSize - 2)
     }
-    const check = excludes.every(item => (
-      pos.x !== item.x
-      || pos.y !== item.y
-    ))
+    const check = excludes.every((item) => pos.x !== item.x || pos.y !== item.y)
     if (check) {
       return pos
     }
@@ -112,15 +103,14 @@ const getInitialGameState = () => ({
   fields: initFields(),
   tickId: null,
   status: StatusType.init,
-  direction: DirectionType.up,
+  direction: DirectionType.up
 })
 
-const isConflict = (position) => (
-  position.y < 0
-  || position.x < 0
-  || position.y > FieldSize - 1
-  || position.x > FieldSize - 1
-)
+const isConflict = (position) =>
+  position.y < 0 ||
+  position.x < 0 ||
+  position.y > FieldSize - 1 ||
+  position.x > FieldSize - 1
 
 const isEatingMe = (fields, newPosition) => {
   return fields[newPosition.y][newPosition.x] === DotType.snake
@@ -130,13 +120,10 @@ const handleMoving = (direction, state) => {
   const { length, history, fields, position } = state
   const newPosition = DirectionTypeDelta[direction](position)
   const newHistory = [position, ...history].slice(0, length)
-  if (
-    !isConflict(newPosition)
-    && !isEatingMe(fields, newPosition)
-  ) {
+  if (!isConflict(newPosition) && !isEatingMe(fields, newPosition)) {
     // ゲーム続行
     const newFields = [...fields]
-    let newLength = length;
+    let newLength = length
     if (newFields[newPosition.y][newPosition.x] === DotType.food) {
       setFood([newPosition, ...newHistory], newFields)
       newLength = length + 1
@@ -155,11 +142,11 @@ const handleMoving = (direction, state) => {
     }
   }
 
-  return ({
+  return {
     ...state,
     status: StatusType.gameover,
     tickId: null
-  })
+  }
 }
 
 let handleKeyPress = null
@@ -171,9 +158,19 @@ const App = () => {
   const [direction, setDirection] = useState(DirectionType.up)
   const { status, fields, difficulty } = gameState
 
+  const editable = useMemo(() => status === StatusType.init, [status])
+  const canDifficultyUp = useMemo(
+    () => editable && difficulty - 1 < IntervalList.length - 1,
+    [editable, difficulty]
+  )
+  const canDifficultyDown = useMemo(() => editable && difficulty - 1 > 0, [
+    editable,
+    difficulty
+  ])
+
   useEffect(() => {
     const timerId = setInterval(() => {
-      setTick(tick => tick + 1)
+      setTick((tick) => tick + 1)
     }, IntervalList[difficulty - 1])
     setTimer(timerId)
     return () => {
@@ -190,7 +187,7 @@ const App = () => {
   }, [timer, direction, tick, setGameState]) // eslint-disable-line react-hooks/exhaustive-deps
 
   const handleStart = () => {
-    setGameState(state => ({
+    setGameState((state) => ({
       ...state,
       status: StatusType.playing
     }))
@@ -202,23 +199,38 @@ const App = () => {
   }
 
   const handleStop = () => {
-    setGameState(state => ({ ...state, status: StatusType.suspended }))
+    setGameState((state) => ({ ...state, status: StatusType.suspended }))
   }
 
-  const handleChangeDirection = useCallback((newDirection) => {
-    if (
-      !DirectionType[newDirection]
-      || status !== StatusType.playing
-      || OppositeDirectionType[direction] === newDirection
-      || direction === newDirection
-    ) {
-      return
-    }
-    setDirection(newDirection)
-  }, [direction, status, setDirection])
+  const handleChangeDifficulty = (delta) => {
+    setGameState((state) => {
+      if (!IntervalList[state.difficulty - 1 + delta]) {
+        return state
+      }
+      return {
+        ...state,
+        difficulty: state.difficulty + delta
+      }
+    })
+  }
+
+  const handleChangeDirection = useCallback(
+    (newDirection) => {
+      if (
+        !DirectionType[newDirection] ||
+        status !== StatusType.playing ||
+        OppositeDirectionType[direction] === newDirection ||
+        direction === newDirection
+      ) {
+        return
+      }
+      setDirection(newDirection)
+    },
+    [direction, status, setDirection]
+  )
 
   useEffect(() => {
-    if(handleKeyPress) {
+    if (handleKeyPress) {
       document.removeEventListener('keydown', handleKeyPress)
     }
     handleKeyPress = (e) => {
@@ -232,12 +244,18 @@ const App = () => {
     <div className="App">
       <header className="header">
         <div className="title-container">
-          <h1 className="title">Snake Game</h1>
+          <h1 className="title">SNAKE GAME</h1>
         </div>
-        <Navigation state={gameState}/>
+        <Navigation
+          state={gameState}
+          editable={editable}
+          canUp={canDifficultyUp}
+          canDown={canDifficultyDown}
+          onChangeDifficulty={handleChangeDifficulty}
+        />
       </header>
       <main className="main">
-        <Field fields={fields}/>
+        <Field fields={fields} />
       </main>
       <footer className="footer">
         <StartButton
@@ -246,10 +264,10 @@ const App = () => {
           onRestart={handleRestart}
           onStop={handleStop}
         />
-        <MoveButton handleChangeDirection={handleChangeDirection}/>
+        <MoveButton handleChangeDirection={handleChangeDirection} />
       </footer>
     </div>
-  );
+  )
 }
 
-export default App;
+export default App
