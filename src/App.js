@@ -160,13 +160,10 @@ const App = () => {
 
   const editable = useMemo(() => status === StatusType.init, [status])
   const canDifficultyUp = useMemo(
-    () => editable && difficulty - 1 < IntervalList.length - 1,
-    [editable, difficulty]
+    () => difficulty - 1 < IntervalList.length - 1,
+    [difficulty]
   )
-  const canDifficultyDown = useMemo(() => editable && difficulty - 1 > 0, [
-    editable,
-    difficulty
-  ])
+  const canDifficultyDown = useMemo(() => difficulty - 1 > 0, [difficulty])
 
   useEffect(() => {
     const timerId = setInterval(() => {
@@ -203,6 +200,9 @@ const App = () => {
   }
 
   const handleChangeDifficulty = (delta) => {
+    if (!editable) {
+      return
+    }
     setGameState((state) => {
       if (!IntervalList[state.difficulty - 1 + delta]) {
         return state

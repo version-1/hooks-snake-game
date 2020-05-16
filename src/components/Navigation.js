@@ -2,14 +2,12 @@ import React from 'react'
 
 const Navigation = ({
   state,
-  editable,
   canUp,
   canDown,
   onChangeDifficulty
 }) => {
   const { length, difficulty } = state
 
-  const disabled = editable ? '' : 'disabled'
   const upVisiblity = canUp ? '' : 'is-hidden'
   const downVisibilty = canDown ? '' : 'is-hidden'
   const onUpDifficulty = () => onChangeDifficulty(1)
@@ -26,7 +24,7 @@ const Navigation = ({
         <span className="navigation-label">Difficulty: </span>
         <div className="navigation-item-number-container">
           <span className="num-board">{difficulty}</span>
-          <div className={`difficulty-button-container ${disabled}`}>
+          <div className="difficulty-button-container">
             <div
               className={`difficulty-button difficulty-up ${upVisiblity}`}
               onClick={onUpDifficulty}
