@@ -1,14 +1,14 @@
 {
   "files": {
     "main.css": "/hooks-snake-game/static/css/main.69a1ee48.chunk.css",
-    "main.js": "/hooks-snake-game/static/js/main.ba2cbf73.chunk.js",
-    "main.js.map": "/hooks-snake-game/static/js/main.ba2cbf73.chunk.js.map",
+    "main.js": "/hooks-snake-game/static/js/main.d9612d4d.chunk.js",
+    "main.js.map": "/hooks-snake-game/static/js/main.d9612d4d.chunk.js.map",
     "runtime-main.js": "/hooks-snake-game/static/js/runtime-main.15d93ae8.js",
     "runtime-main.js.map": "/hooks-snake-game/static/js/runtime-main.15d93ae8.js.map",
     "static/js/2.310f76d1.chunk.js": "/hooks-snake-game/static/js/2.310f76d1.chunk.js",
     "static/js/2.310f76d1.chunk.js.map": "/hooks-snake-game/static/js/2.310f76d1.chunk.js.map",
     "index.html": "/hooks-snake-game/index.html",
-    "precache-manifest.6abc2a649f023f3d47879652ef559bcd.js": "/hooks-snake-game/precache-manifest.6abc2a649f023f3d47879652ef559bcd.js",
+    "precache-manifest.462c63b928d77fb185251948a1ead567.js": "/hooks-snake-game/precache-manifest.462c63b928d77fb185251948a1ead567.js",
     "service-worker.js": "/hooks-snake-game/service-worker.js",
     "static/css/main.69a1ee48.chunk.css.map": "/hooks-snake-game/static/css/main.69a1ee48.chunk.css.map",
     "static/js/2.310f76d1.chunk.js.LICENSE.txt": "/hooks-snake-game/static/js/2.310f76d1.chunk.js.LICENSE.txt"
@@ -17,6 +17,6 @@
     "static/js/runtime-main.15d93ae8.js",
     "static/js/2.310f76d1.chunk.js",
     "static/css/main.69a1ee48.chunk.css",
-    "static/js/main.ba2cbf73.chunk.js"
+    "static/js/main.d9612d4d.chunk.js"
   ]
 }
