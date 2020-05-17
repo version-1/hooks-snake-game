@@ -1,11 +1,5 @@
 import React from 'react'
-
-const StatusText = {
-  init: 'START',
-  playing: 'STOP',
-  gameover: 'GAME OVER',
-  suspended: 'START'
-}
+import constants from '../constants'
 
 const StartButton = ({ status, onStart, onStop, onRestart }) => {
   const handleClick = () => {
@@ -17,8 +11,9 @@ const StartButton = ({ status, onStart, onStop, onRestart }) => {
     }
     _onClick[status]()
   }
+  const text = constants.StatusText[status]
   return <div className="button-start">
-    <button className={`btn btn-${status}`} tabIndex={1} onClick={handleClick}>{StatusText[status]}</button>
+    <button className={`btn btn-${status}`} tabIndex={1} onClick={handleClick}>{text}</button>
   </div>
 }
 
