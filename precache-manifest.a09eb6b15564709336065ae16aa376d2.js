@@ -1,23 +1,23 @@
 self.__precacheManifest = (self.__precacheManifest || []).concat([
   {
-    "revision": "66a144a2e4d3ac19b328a4784840c6b6",
+    "revision": "a3ffd1ca2c644d46ca69acac29a59464",
     "url": "/hooks-snake-game/index.html"
   },
   {
-    "revision": "338b652b5568df5daed6",
+    "revision": "547c1d5b23534245440d",
     "url": "/hooks-snake-game/static/css/main.69a1ee48.chunk.css"
   },
   {
-    "revision": "34b31a4e92e4a5cc7785",
-    "url": "/hooks-snake-game/static/js/2.310f76d1.chunk.js"
+    "revision": "8b75fb70742fdba609ff",
+    "url": "/hooks-snake-game/static/js/2.24a8f7cb.chunk.js"
   },
   {
     "revision": "e88a3e95b5364d46e95b35ae8c0dc27d",
-    "url": "/hooks-snake-game/static/js/2.310f76d1.chunk.js.LICENSE.txt"
+    "url": "/hooks-snake-game/static/js/2.24a8f7cb.chunk.js.LICENSE.txt"
   },
   {
-    "revision": "338b652b5568df5daed6",
-    "url": "/hooks-snake-game/static/js/main.89e45b02.chunk.js"
+    "revision": "547c1d5b23534245440d",
+    "url": "/hooks-snake-game/static/js/main.b93b0fbf.chunk.js"
   },
   {
     "revision": "6a57cbb490b16b09b58d",
