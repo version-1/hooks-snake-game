@@ -1,10 +1,10 @@
 self.__precacheManifest = (self.__precacheManifest || []).concat([
   {
-    "revision": "e108c8911fa4ed12d2e28beb2e8ba858",
+    "revision": "9c90e3678adb2b493d0b42b2d1a8b171",
     "url": "/hooks-snake-game/index.html"
   },
   {
-    "revision": "dab8a5eab6ebd80e1490",
+    "revision": "dfd457a5932ec9cda943",
     "url": "/hooks-snake-game/static/css/main.69a1ee48.chunk.css"
   },
   {
@@ -16,8 +16,8 @@ self.__precacheManifest = (self.__precacheManifest || []).concat([
     "url": "/hooks-snake-game/static/js/2.310f76d1.chunk.js.LICENSE.txt"
   },
   {
-    "revision": "dab8a5eab6ebd80e1490",
-    "url": "/hooks-snake-game/static/js/main.ba2cbf73.chunk.js"
+    "revision": "dfd457a5932ec9cda943",
+    "url": "/hooks-snake-game/static/js/main.d9612d4d.chunk.js"
   },
   {
     "revision": "6a57cbb490b16b09b58d",
