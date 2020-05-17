@@ -3,57 +3,7 @@ import Field from './components/Field'
 import Navigation from './components/Navigation'
 import StartButton from './components/StartButton'
 import MoveButton from './components/MoveButton'
-
-const FieldSize = 35
-const DefaultDifficulty = 3
-const IntervalList = [500, 300, 100, 50, 10]
-
-const StatusType = {
-  init: 'init',
-  playing: 'playing',
-  suspended: 'suspended',
-  gameover: 'gameover'
-}
-
-const DirectionType = {
-  up: 'up',
-  down: 'down',
-  right: 'right',
-  left: 'left'
-}
-
-const OppositeDirectionType = {
-  up: 'down',
-  down: 'up',
-  right: 'left',
-  left: 'right'
-}
-
-const DotType = {
-  none: '',
-  snake: 'snake',
-  food: 'food'
-}
-
-const DirectionTypeDelta = {
-  up: ({ x, y }) => ({ x, y: y - 1 }),
-  down: ({ x, y }) => ({ x, y: y + 1 }),
-  right: ({ x, y }) => ({ x: x + 1, y }),
-  left: ({ x, y }) => ({ x: x - 1, y })
-}
-
-const DirectionKeyCodeMap = {
-  37: DirectionType.left,
-  38: DirectionType.up,
-  39: DirectionType.right,
-  40: DirectionType.down
-}
-
-// へびの初期表示位置をセット
-const SnakeStartPosition = {
-  x: Math.round(FieldSize / 2) - 1,
-  y: Math.round(FieldSize / 2) - 1
-}
+import constants from './constants'
 
 const getRandomNum = (min, max) => {
   return Math.floor(Math.random() * (max + 1 - min)) + min
@@ -62,8 +12,8 @@ const getRandomNum = (min, max) => {
 const getFoodPosition = (excludes) => {
   while (true) {
     const pos = {
-      x: getRandomNum(1, FieldSize - 2),
-      y: getRandomNum(1, FieldSize - 2)
+      x: getRandomNum(1, constants.FieldSize - 2),
+      y: getRandomNum(1, constants.FieldSize - 2)
     }
     const check = excludes.every((item) => pos.x !== item.x || pos.y !== item.y)
     if (check) {
@@ -74,19 +24,19 @@ const getFoodPosition = (excludes) => {
 
 const setFood = (excludes, fields) => {
   const foodPos = getFoodPosition(excludes)
-  fields[foodPos.y][foodPos.x] = DotType.food
+  fields[foodPos.y][foodPos.x] = constants.DotType.food
   return foodPos
 }
 
 const setSnake = (fields) => {
-  fields[SnakeStartPosition.y][SnakeStartPosition.x] = DotType.snake
-  return SnakeStartPosition
+  fields[constants.SnakeStartPosition.y][constants.SnakeStartPosition.x] = constants.DotType.snake
+  return constants.SnakeStartPosition
 }
 
 const initFields = () => {
   const fields = []
-  for (let i = 0; i < FieldSize; i++) {
-    const cols = new Array(FieldSize).fill(DotType.none)
+  for (let i = 0; i < constants.FieldSize; i++) {
+    const cols = new Array(constants.FieldSize).fill(constants.DotType.none)
     fields.push(cols)
   }
   const snakePos = setSnake(fields)
@@ -95,45 +45,45 @@ const initFields = () => {
 }
 
 const getInitialGameState = () => ({
-  position: SnakeStartPosition,
+  position: constants.SnakeStartPosition,
   history: [],
   length: 1,
-  difficulty: DefaultDifficulty,
+  difficulty: constants.DefaultDifficulty,
   fields: initFields(),
   tickId: null,
-  status: StatusType.init,
-  direction: DirectionType.up
+  status: constants.StatusType.init,
+  direction: constants.DirectionType.up
 })
 
 const isConflict = (position) =>
   position.y < 0 ||
   position.x < 0 ||
-  position.y > FieldSize - 1 ||
-  position.x > FieldSize - 1
+  position.y > constants.FieldSize - 1 ||
+  position.x > constants.FieldSize - 1
 
 const isEatingMe = (fields, newPosition) => {
-  return fields[newPosition.y][newPosition.x] === DotType.snake
+  return fields[newPosition.y][newPosition.x] === constants.DotType.snake
 }
 
 const handleMoving = (direction, state) => {
   const { length, history, fields, position } = state
-  const newPosition = DirectionTypeDelta[direction](position)
+  const newPosition = constants.DirectionTypeDelta[direction](position)
   const newHistory = [position, ...history].slice(0, length)
   if (!isConflict(newPosition) && !isEatingMe(fields, newPosition)) {
     // ゲーム続行
     const newFields = [...fields]
     let newLength = length
-    if (newFields[newPosition.y][newPosition.x] === DotType.food) {
+    if (newFields[newPosition.y][newPosition.x] === constants.DotType.food) {
       setFood([newPosition, ...newHistory], newFields)
       newLength = length + 1
     }
     const removingPos = newHistory.slice(-1)[0]
-    newFields[newPosition.y][newPosition.x] = DotType.snake
-    newFields[removingPos.y][removingPos.x] = DotType.none
+    newFields[newPosition.y][newPosition.x] = constants.DotType.snake
+    newFields[removingPos.y][removingPos.x] = constants.DotType.none
 
     return {
       ...state,
-      status: StatusType.playing,
+      status: constants.StatusType.playing,
       history: newHistory,
       length: newLength,
       position: newPosition,
@@ -143,7 +93,7 @@ const handleMoving = (direction, state) => {
 
   return {
     ...state,
-    status: StatusType.gameover,
+    status: constants.StatusType.gameover,
     tickId: null
   }
 }
@@ -154,12 +104,12 @@ const App = () => {
   const [gameState, setGameState] = useState(getInitialGameState())
   const [tick, setTick] = useState(0)
   const [timer, setTimer] = useState()
-  const [direction, setDirection] = useState(DirectionType.up)
+  const [direction, setDirection] = useState(constants.DirectionType.up)
   const { status, fields, difficulty } = gameState
 
-  const editable = useMemo(() => status === StatusType.init, [status])
+  const editable = useMemo(() => status === constants.StatusType.init, [status])
   const canDifficultyUp = useMemo(
-    () => difficulty - 1 < IntervalList.length - 1,
+    () => difficulty - 1 < constants.IntervalList.length - 1,
     [difficulty]
   )
   const canDifficultyDown = useMemo(() => difficulty - 1 > 0, [difficulty])
@@ -167,7 +117,7 @@ const App = () => {
   useEffect(() => {
     const timerId = setInterval(() => {
       setTick((tick) => tick + 1)
-    }, IntervalList[difficulty - 1])
+    }, constants.IntervalList[difficulty - 1])
     setTimer(timerId)
     return () => {
       clearInterval(timerId)
@@ -175,7 +125,7 @@ const App = () => {
   }, [difficulty])
 
   useEffect(() => {
-    if (gameState.status !== StatusType.playing) {
+    if (gameState.status !== constants.StatusType.playing) {
       return
     }
     const newState = handleMoving(direction, gameState)
@@ -185,17 +135,17 @@ const App = () => {
   const handleStart = () => {
     setGameState((state) => ({
       ...state,
-      status: StatusType.playing
+      status: constants.StatusType.playing
     }))
   }
 
   const handleRestart = () => {
-    setDirection(DirectionType.up)
+    setDirection(constants.DirectionType.up)
     setGameState(getInitialGameState())
   }
 
   const handleStop = () => {
-    setGameState((state) => ({ ...state, status: StatusType.suspended }))
+    setGameState((state) => ({ ...state, status: constants.StatusType.suspended }))
   }
 
   const handleChangeDifficulty = (delta) => {
@@ -203,7 +153,7 @@ const App = () => {
       return
     }
     setGameState((state) => {
-      if (!IntervalList[state.difficulty - 1 + delta]) {
+      if (!constants.IntervalList[state.difficulty - 1 + delta]) {
         return state
       }
       return {
@@ -216,9 +166,9 @@ const App = () => {
   const handleChangeDirection = useCallback(
     (newDirection) => {
       if (
-        !DirectionType[newDirection] ||
-        status !== StatusType.playing ||
-        OppositeDirectionType[direction] === newDirection ||
+        !constants.DirectionType[newDirection] ||
+        status !== constants.StatusType.playing ||
+        constants.OppositeDirectionType[direction] === newDirection ||
         direction === newDirection
       ) {
         return
@@ -233,7 +183,7 @@ const App = () => {
       document.removeEventListener('keydown', handleKeyPress)
     }
     handleKeyPress = (e) => {
-      const direction = DirectionKeyCodeMap[e.keyCode]
+      const direction = constants.DirectionKeyCodeMap[e.keyCode]
       handleChangeDirection(direction)
     }
     document.addEventListener('keydown', handleKeyPress)
