@@ -3,7 +3,6 @@ import Field from './components/Field'
 import Navigation from './components/Navigation'
 import StartButton from './components/StartButton'
 import MoveButton from './components/MoveButton'
-import './App.css'
 
 const FieldSize = 35
 const DefaultDifficulty = 3
@@ -241,7 +240,7 @@ const App = () => {
   }, [handleChangeDirection])
 
   return (
-    <div className="App">
+    <div className="app">
       <header className="header">
         <div className="title-container">
           <h1 className="title">SNAKE GAME</h1>
