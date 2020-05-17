@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useMemo, useState } from 'react'
+import { useCallback, useEffect, useMemo, useState, useReducer } from 'react'
 import constants from '../constants'
 import { isConflict, setValue, setValueRandomly, initFields } from '../utils'
 
@@ -13,51 +13,112 @@ const getInitialState = () => ({
   history: [],
   length: 1,
   difficulty: constants.DefaultDifficulty,
-  fields: initFields(constants.FieldSize, constants.DotType, constants.SnakeStartPosition),
+  fields: initFields(
+    constants.FieldSize,
+    constants.DotType,
+    constants.SnakeStartPosition
+  ),
   tickId: null,
-  status: constants.StatusType.init,
-  direction: constants.DirectionType.up
+  status: constants.StatusType.init
 })
 
-const handleMoving = (direction, state) => {
+const {
+  moving,
+  restart,
+  gameover,
+  start,
+  stop,
+  changeDifficulty
+} = {
+  moving: (payload) => ({ type: 'moving', payload }),
+  restart: (payload) => ({ type: 'restart', payload }),
+  gameover: () => ({
+    type: 'gameover',
+    payload: { status: constants.StatusType.gameover }
+  }),
+  start: () => ({
+    type: 'start',
+    payload: { status: constants.StatusType.playing }
+  }),
+  stop: () => ({
+    type: 'stop',
+    payload: { status: constants.StatusType.suspended }
+  }),
+  changeDifficulty: ({ delta }) => ({
+    type: 'changeDifficulty',
+    payload: { delta }
+  })
+}
+
+const reducer = (state, action) => {
+  switch (action.type) {
+    case restart.name:
+    case moving.name:
+      return action.payload
+    case gameover.name:
+    case start.name:
+    case stop.name:
+      return { ...state, status: action.payload.status }
+    case changeDifficulty.name:
+      const { delta } = action.payload
+      if (!constants.IntervalList[state.difficulty - 1 + delta]) {
+        return state
+      }
+      return {
+        ...state,
+        difficulty: state.difficulty + delta
+      }
+    default:
+      return state
+  }
+}
+
+const handleMoving = (dispatch, direction, state) => {
   const { length, history, fields, position } = state
   const newPosition = constants.DirectionTypeDelta[direction](position)
   const newHistory = [position, ...history].slice(0, length)
-  if (!_isConflict(newPosition) && !isEatingMe(fields, newPosition)) {
-    // ゲーム続行
-    const newFields = [...fields]
-    let newLength = length
-    if (newFields[newPosition.y][newPosition.x] === constants.DotType.food) {
-      _setValueRandomly([newPosition, ...newHistory], newFields, constants.DotType.food)
-      newLength = length + 1
-    }
-    const removingPos = newHistory.slice(-1)[0]
-    setValue(newFields, newPosition, constants.DotType.snake)
-    setValue(newFields, removingPos, constants.DotType.none)
+  if (_isConflict(newPosition) || isEatingMe(fields, newPosition)) {
+    return dispatch(
+      gameover({
+        ...state,
+        status: constants.StatusType.gameover,
+        tickId: null
+      })
+    )
+  }
+  // ゲーム続行
+  const newFields = [...fields]
+  let newLength = length
+  if (newFields[newPosition.y][newPosition.x] === constants.DotType.food) {
+    _setValueRandomly(
+      [newPosition, ...newHistory],
+      newFields,
+      constants.DotType.food
+    )
+    newLength = length + 1
+  }
+  const removingPos = newHistory.slice(-1)[0]
+  setValue(newFields, newPosition, constants.DotType.snake)
+  setValue(newFields, removingPos, constants.DotType.none)
 
-    return {
+  return dispatch(
+    moving({
       ...state,
       status: constants.StatusType.playing,
       history: newHistory,
       length: newLength,
       position: newPosition,
       fields: newFields
-    }
-  }
-
-  return {
-    ...state,
-    status: constants.StatusType.gameover,
-    tickId: null
-  }
+    })
+  )
 }
 
 let handleKeyPress = null
 
 const useSnakeGame = () => {
-  const [state, setState] = useState(getInitialState())
+  const [state, dispatch] = useReducer(reducer, getInitialState())
   const [tick, setTick] = useState(0)
-  const [timer, setTimer] = useState()
+  const [, setTimer] = useState()
   const [direction, setDirection] = useState(constants.DirectionType.up)
   const { status, difficulty } = state
 
@@ -74,38 +135,23 @@ const useSnakeGame = () => {
     canDifficultyDown
   }
 
-  const handleStart = () => {
-    setState((state) => ({
-      ...state,
-      status: constants.StatusType.playing
-    }))
+  const handleStart = () => dispatch(start())
+
+  const handleRestart = () => {
+    setDirection(constants.DirectionType.up)
+    dispatch(restart(getInitialState()))
   }
 
-  const handleRestart = useCallback(() => {
-    setDirection(constants.DirectionType.up)
-    setState(getInitialState())
-  }, [setState, setDirection])
-
-  const handleStop = useCallback(() => {
-    setState((state) => ({ ...state, status: constants.StatusType.suspended }))
-  }, [setState])
+  const handleStop = () => dispatch(stop())
 
   const handleChangeDifficulty = useCallback(
     (delta) => {
       if (!editable) {
         return
       }
-      setState((state) => {
-        if (!constants.IntervalList[state.difficulty - 1 + delta]) {
-          return state
-        }
-        return {
-          ...state,
-          difficulty: state.difficulty + delta
-        }
-      })
+      dispatch(changeDifficulty({ delta }))
     },
-    [editable, setState]
+    [editable, dispatch]
   )
 
   const handleChangeDirection = useCallback(
@@ -120,7 +166,7 @@ const useSnakeGame = () => {
       }
       setDirection(newDirection)
     },
-    [direction, status, setDirection]
+    [direction, status]
   )
 
   const handler = {
@@ -145,9 +191,8 @@ const useSnakeGame = () => {
     if (state.status !== constants.StatusType.playing) {
       return
     }
-    const newState = handleMoving(direction, state)
-    setState(newState)
-  }, [timer, direction, tick, setState]) // eslint-disable-line react-hooks/exhaustive-deps
+    handleMoving(dispatch, direction, state)
+  }, [direction, tick, dispatch]) // eslint-disable-line react-hooks/exhaustive-deps
 
   useEffect(() => {
     if (handleKeyPress) {
