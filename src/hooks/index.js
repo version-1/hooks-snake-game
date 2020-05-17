@@ -22,6 +22,13 @@ const getInitialState = () => ({
   status: constants.StatusType.init
 })
 
+const MOVING = 'moving'
+const START = 'start'
+const GAMEOVER = 'gameover'
+const STOP = 'stop'
+const RESTART = 'restart'
+const CHANGE_DIFFICULTY = 'changeDifficulty'
+
 const {
   moving,
   restart,
@@ -30,36 +37,36 @@ const {
   stop,
   changeDifficulty
 } = {
-  moving: (payload) => ({ type: 'moving', payload }),
-  restart: (payload) => ({ type: 'restart', payload }),
+  moving: (payload) => ({ type: MOVING, payload }),
+  restart: (payload) => ({ type: RESTART, payload }),
   gameover: () => ({
-    type: 'gameover',
+    type: GAMEOVER,
     payload: { status: constants.StatusType.gameover }
   }),
   start: () => ({
-    type: 'start',
+    type: START,
     payload: { status: constants.StatusType.playing }
   }),
   stop: () => ({
-    type: 'stop',
+    type: STOP,
     payload: { status: constants.StatusType.suspended }
   }),
   changeDifficulty: ({ delta }) => ({
-    type: 'changeDifficulty',
+    type: CHANGE_DIFFICULTY,
     payload: { delta }
   })
 }
 
 const reducer = (state, action) => {
   switch (action.type) {
-    case restart.name:
-    case moving.name:
+    case RESTART:
+    case MOVING:
       return action.payload
-    case gameover.name:
-    case start.name:
-    case stop.name:
+    case GAMEOVER:
+    case START:
+    case STOP:
       return { ...state, status: action.payload.status }
-    case changeDifficulty.name:
+    case CHANGE_DIFFICULTY:
       const { delta } = action.payload
       if (!constants.IntervalList[state.difficulty - 1 + delta]) {
         return state
