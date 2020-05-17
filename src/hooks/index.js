@@ -1,44 +1,11 @@
 import { useCallback, useEffect, useMemo, useState } from 'react'
 import constants from '../constants'
+import { isConflict, setValue, setValueRandomly, initFields } from '../utils'
 
-const getRandomNum = (min, max) => {
-  return Math.floor(Math.random() * (max + 1 - min)) + min
-}
-
-const getFoodPosition = (excludes) => {
-  while (true) {
-    const pos = {
-      x: getRandomNum(1, constants.FieldSize - 2),
-      y: getRandomNum(1, constants.FieldSize - 2)
-    }
-    const check = excludes.every((item) => pos.x !== item.x || pos.y !== item.y)
-    if (check) {
-      return pos
-    }
-  }
-}
-
-const setFood = (excludes, fields) => {
-  const foodPos = getFoodPosition(excludes)
-  fields[foodPos.y][foodPos.x] = constants.DotType.food
-  return foodPos
-}
-
-const setSnake = (fields) => {
-  fields[constants.SnakeStartPosition.y][constants.SnakeStartPosition.x] =
-    constants.DotType.snake
-  return constants.SnakeStartPosition
-}
-
-const initFields = () => {
-  const fields = []
-  for (let i = 0; i < constants.FieldSize; i++) {
-    const cols = new Array(constants.FieldSize).fill(constants.DotType.none)
-    fields.push(cols)
-  }
-  const snakePos = setSnake(fields)
-  setFood([snakePos], fields)
-  return fields
+const _isConflict = isConflict(constants.FieldSize)
+const _setValueRandomly = setValueRandomly(constants.FieldSize)
+const isEatingMe = (fields, newPosition) => {
+  return fields[newPosition.y][newPosition.x] === constants.DotType.snake
 }
 
 const getInitialState = () => ({
@@ -46,37 +13,27 @@ const getInitialState = () => ({
   history: [],
   length: 1,
   difficulty: constants.DefaultDifficulty,
-  fields: initFields(),
+  fields: initFields(constants.FieldSize, constants.DotType, constants.SnakeStartPosition),
   tickId: null,
   status: constants.StatusType.init,
   direction: constants.DirectionType.up
 })
 
-const isConflict = (position) =>
-  position.y < 0 ||
-  position.x < 0 ||
-  position.y > constants.FieldSize - 1 ||
-  position.x > constants.FieldSize - 1
-
-const isEatingMe = (fields, newPosition) => {
-  return fields[newPosition.y][newPosition.x] === constants.DotType.snake
-}
-
 const handleMoving = (direction, state) => {
   const { length, history, fields, position } = state
   const newPosition = constants.DirectionTypeDelta[direction](position)
   const newHistory = [position, ...history].slice(0, length)
-  if (!isConflict(newPosition) && !isEatingMe(fields, newPosition)) {
+  if (!_isConflict(newPosition) && !isEatingMe(fields, newPosition)) {
     // ゲーム続行
     const newFields = [...fields]
     let newLength = length
     if (newFields[newPosition.y][newPosition.x] === constants.DotType.food) {
-      setFood([newPosition, ...newHistory], newFields)
+      _setValueRandomly([newPosition, ...newHistory], newFields, constants.DotType.food)
       newLength = length + 1
     }
     const removingPos = newHistory.slice(-1)[0]
-    newFields[newPosition.y][newPosition.x] = constants.DotType.snake
-    newFields[removingPos.y][removingPos.x] = constants.DotType.none
+    setValue(newFields, newPosition, constants.DotType.snake)
+    setValue(newFields, removingPos, constants.DotType.none)
 
     return {
       ...state,
