@@ -1,46 +1,28 @@
-export const getRandomNum = (min, max) => {
-  return Math.floor(Math.random() * (max + 1 - min)) + min
-}
+export const getFoodPostion = (fieldSize, excludes) => {
+  while(true) {
+    const x = Math.floor(Math.random() * (fieldSize - 1 - 1)) + 1;
+    const y = Math.floor(Math.random() * (fieldSize - 1 - 1)) + 1;
+    const conflict = excludes.some(item => item.x === x && item.y === y)
 
-export const getRandomPosition = (fieldSize, excludes) => {
-  while (true) {
-    const pos = {
-      x: getRandomNum(1, fieldSize - 2),
-      y: getRandomNum(1, fieldSize - 2)
-    }
-    const check = excludes.every((item) => pos.x !== item.x || pos.y !== item.y)
-    if (check) {
-      return pos
+    if (!conflict) {
+      return { x, y };
     }
   }
 }
 
-export const setValue = (fields, pos, value) => {
-  fields[pos.y][pos.x] = value
-  return pos
-}
-
-export const setValueRandomly = (fieldSize) => (excludes, fields, value) => {
-  const pos = getRandomPosition(fieldSize, excludes)
-  setValue(fields, pos, value)
-  return pos
-}
-
-export const initFields = (fieldSize, dotType, startPos) => {
-  const fields = []
+export const initFields = (fieldSize, snake) => {
+  const fields = []; // 新しい配列を作成
+  // フィールドの縦の長さを作る分だけループ
   for (let i = 0; i < fieldSize; i++) {
-    const cols = new Array(fieldSize).fill(dotType.none)
-    fields.push(cols)
+    // フィールドの列の長さ分の配列を作成
+    const cols = new Array(fieldSize).fill('');
+    // フィールドの列を配列の追加
+    fields.push(cols);
   }
-  const snakePos = setValue(fields, startPos, dotType.snake)
-  setValueRandomly(fieldSize)([snakePos], fields, dotType.food)
-  return fields
-}
+  fields[snake.y][snake.x] = 'snake'
 
-export const isConflict = (fieldSize) => (position) =>
-  position.y < 0 ||
-  position.x < 0 ||
-  position.y > fieldSize - 1 ||
-  position.x > fieldSize - 1
+  const food = getFoodPostion(fieldSize, [snake])
+  fields[food.y][food.x] = 'food'
 
-
+  return fields; // 作成した配列を返却
+};
