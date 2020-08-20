@@ -165,7 +165,7 @@ function App() {
         <div className="title-container">
           <h1 className="title">Snake Game</h1>
         </div>
-        <Navigation />
+        <Navigation length={body.length} />
       </header>
       <main className="main">
         <Field fields={fields} />
