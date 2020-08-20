@@ -42,3 +42,19 @@ body {
   background: pink;
 }
 
+.navigation {
+  display: flex;
+  margin-top: 4px;
+  justify-content: space-evenly;
+  color: white;
+  font-weight: bold;
+  background: #020705;
+  box-shadow: 0px 4px 1px 1px #020604, 0px 6px 1px 1px #010403;
+  border: 1px solid #ffffff30;
+}
+
+.navigation-item {
+  padding: 16px;
+  display: flex;
+  align-items: center;
+}
