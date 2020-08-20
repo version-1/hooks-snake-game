@@ -58,3 +58,20 @@ body {
   display: flex;
   align-items: center;
 }
+
+.navigation-item-number-container {
+  display: flex;
+  padding: 0 8px;
+  align-items: center;
+  margin-left: 8px;
+}
+
+.num-board {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background: #0f1d1d;
+  height: 48px;
+  width: 24px;
+}
+
