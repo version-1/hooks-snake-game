@@ -1,6 +1,6 @@
 import React from 'react';
 
-const Navigation = ({ length, difficulty = 3 }) => {
+const Navigation = ({ length, difficulty = 3, onChangeDifficulty }) => {
   return (
     <div className="navigation">
       <div className="navigation-item">

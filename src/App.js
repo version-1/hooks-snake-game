@@ -124,6 +124,13 @@ function App() {
     setDirection(newDirection)
   }, [direction ,status])
 
+  const onChangeDifficulty = useCallback((difficulty) => {
+    if (status === GameStatus.playing) {
+      return
+    }
+    setDifficulty(difficulty)
+  }, [difficulty])
+
   useEffect(() => {
     const handleKeyDown = (e) => {
       const newDirection = DirectionKeyCodeMap[e.keyCode];
@@ -166,7 +173,11 @@ function App() {
         <div className="title-container">
           <h1 className="title">Snake Game</h1>
         </div>
-        <Navigation length={body.length} difficulty={difficulty} />
+        <Navigation
+          length={body.length}
+          difficulty={difficulty}
+          onChangeDifficulty={onChangeDifficulty}
+        />
       </header>
       <main className="main">
         <Field fields={fields} />
