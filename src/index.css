@@ -11,6 +11,10 @@ body {
   box-sizing: border-box;
 }
 
+.is-hidden {
+  visibility: hidden !important;
+}
+
 #root {
   display: flex;
   justify-content: center;
@@ -73,5 +77,49 @@ body {
   background: #0f1d1d;
   height: 48px;
   width: 24px;
+}
+
+.difficulty-number {
+  margin-right: 8px;
+}
+
+.difficulty-button {
+  cursor: pointer;
+  width: 8px;
+  height: 8px;
+  border: 8px solid #0f1d1d;
+  margin: 8px;
+}
+
+.difficulty-button-container {
+  background: #0f1d1d;
+}
+
+.difficulty-up {
+  margin-top: 4px;
+  border-bottom: 8px solid #f0f0f050;
+  transition: all ease .5s;
+}
+.difficulty-up:hover {
+  transform: scale(1.1);
+  border-bottom: 8px solid white;
+}
+.difficulty-up:active {
+  transform: scale(.8);
+  opacity: .8
+}
+
+.difficulty-down {
+  margin-bottom: 4px;
+  border-top: 8px solid #f0f0f050;
+  transition: all ease .5s;
+}
+.difficulty-down:hover {
+  transform: scale(1.1);
+  border-top: 8px solid white;
+}
+.difficulty-down:active {
+  transform: scale(.8);
+  opacity: .8
 }
 

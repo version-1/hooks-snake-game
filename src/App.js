@@ -129,14 +129,14 @@ function App() {
   }, [direction ,status])
 
   const onChangeDifficulty = useCallback((difficulty) => {
-    if (status === GameStatus.playing) {
+    if (status !== GameStatus.init) {
       return
     }
     if (difficulty < 1 || difficulty > Difficulty.length) {
       return
     }
     setDifficulty(difficulty)
-  }, [difficulty])
+  }, [status, difficulty])
 
   useEffect(() => {
     const handleKeyDown = (e) => {
