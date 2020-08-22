@@ -76,6 +76,7 @@ function App() {
   const [body, setBody] = useState([])
   const [status, setStatus] = useState(GameStatus.init)
   const [direction, setDirection] = useState(Direction.up)
+  const [difficulty, setDifficulty] = useState(3)
   const [tick, setTick] = useState(0)
 
   useEffect(() => {
@@ -165,7 +166,7 @@ function App() {
         <div className="title-container">
           <h1 className="title">Snake Game</h1>
         </div>
-        <Navigation length={body.length} />
+        <Navigation length={body.length} difficulty={difficulty} />
       </header>
       <main className="main">
         <Field fields={fields} />
