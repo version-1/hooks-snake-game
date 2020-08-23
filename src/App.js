@@ -141,6 +141,9 @@ function App() {
   useEffect(() => {
     const handleKeyDown = (e) => {
       const newDirection = DirectionKeyCodeMap[e.keyCode];
+      if (!newDirection) {
+        return
+      }
       onChangeDirection(newDirection);
     };
     document.addEventListener('keydown', handleKeyDown);
