@@ -27,6 +27,17 @@ body {
   text-align: center;
 }
 
+.title-container {
+  border-radius: 4px 4px 0px 0px;
+  box-shadow: 0px 4px 1px 1px #97A5A5, 0px 6px 1px 1px #3C4A4A, 0px 0px 1px 1px #3C4A4A;
+}
+
+.title {
+  margin: 0;
+  padding: 8px;
+  font-size: 1.1rem;
+}
+
 .field {
   display: flex;
   flex-wrap: wrap;
