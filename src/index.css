@@ -150,6 +150,7 @@ body {
   padding: 8px 16px;
   font-size: 1rem;
   transition: all ease .2s;
+  text-transform: uppercase;
 }
 
 .btn-init,
