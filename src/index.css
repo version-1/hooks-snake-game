@@ -172,3 +172,20 @@ body {
   outline: 0;
 }
 
+.btn:active {
+  box-shadow: 0px 0px 0px 0px;
+  transform: translateY(6px);
+}
+
+.btn-init:active,
+.btn-suspended:active {
+  background: #20BD60;
+}
+
+.btn-playing:active {
+  background: #EABC5C;
+}
+
+.btn-gameover:active {
+  background: #DE4064;
+}
