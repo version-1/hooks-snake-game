@@ -41,6 +41,12 @@ body {
 .field {
   display: flex;
   flex-wrap: wrap;
+  margin-top: 2px;
+  color: white;
+  background: #0f1d1d;
+  border-radius: 0 0 4px 4px;
+  border: 1px solid #ffffff30;
+  box-shadow: 0px 4px 1px 1px #0C1818, 0px 6px 1px 1px #060F0D;
 }
 
 .dots {
