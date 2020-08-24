@@ -136,7 +136,7 @@ function App() {
       return
     }
     setDifficulty(difficulty)
-  }, [status, difficulty])
+  }, [status])
 
   useEffect(() => {
     const handleKeyDown = (e) => {
