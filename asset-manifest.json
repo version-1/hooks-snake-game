@@ -1,22 +1,22 @@
 {
   "files": {
-    "main.css": "/hooks-snake-game/static/css/main.69a1ee48.chunk.css",
-    "main.js": "/hooks-snake-game/static/js/main.683cd83c.chunk.js",
-    "main.js.map": "/hooks-snake-game/static/js/main.683cd83c.chunk.js.map",
+    "main.css": "/hooks-snake-game/static/css/main.53187cfb.chunk.css",
+    "main.js": "/hooks-snake-game/static/js/main.e4bf3e22.chunk.js",
+    "main.js.map": "/hooks-snake-game/static/js/main.e4bf3e22.chunk.js.map",
     "runtime-main.js": "/hooks-snake-game/static/js/runtime-main.15d93ae8.js",
     "runtime-main.js.map": "/hooks-snake-game/static/js/runtime-main.15d93ae8.js.map",
-    "static/js/2.310f76d1.chunk.js": "/hooks-snake-game/static/js/2.310f76d1.chunk.js",
-    "static/js/2.310f76d1.chunk.js.map": "/hooks-snake-game/static/js/2.310f76d1.chunk.js.map",
+    "static/js/2.6680ebce.chunk.js": "/hooks-snake-game/static/js/2.6680ebce.chunk.js",
+    "static/js/2.6680ebce.chunk.js.map": "/hooks-snake-game/static/js/2.6680ebce.chunk.js.map",
     "index.html": "/hooks-snake-game/index.html",
-    "precache-manifest.91e3e9984255c52f8909a88e11e37a63.js": "/hooks-snake-game/precache-manifest.91e3e9984255c52f8909a88e11e37a63.js",
+    "precache-manifest.d1aa1e7fb9101b20f6450c4befb1acf2.js": "/hooks-snake-game/precache-manifest.d1aa1e7fb9101b20f6450c4befb1acf2.js",
     "service-worker.js": "/hooks-snake-game/service-worker.js",
-    "static/css/main.69a1ee48.chunk.css.map": "/hooks-snake-game/static/css/main.69a1ee48.chunk.css.map",
-    "static/js/2.310f76d1.chunk.js.LICENSE.txt": "/hooks-snake-game/static/js/2.310f76d1.chunk.js.LICENSE.txt"
+    "static/css/main.53187cfb.chunk.css.map": "/hooks-snake-game/static/css/main.53187cfb.chunk.css.map",
+    "static/js/2.6680ebce.chunk.js.LICENSE.txt": "/hooks-snake-game/static/js/2.6680ebce.chunk.js.LICENSE.txt"
   },
   "entrypoints": [
     "static/js/runtime-main.15d93ae8.js",
-    "static/js/2.310f76d1.chunk.js",
-    "static/css/main.69a1ee48.chunk.css",
-    "static/js/main.683cd83c.chunk.js"
+    "static/js/2.6680ebce.chunk.js",
+    "static/css/main.53187cfb.chunk.css",
+    "static/js/main.e4bf3e22.chunk.js"
   ]
 }
