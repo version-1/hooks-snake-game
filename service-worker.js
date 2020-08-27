@@ -14,7 +14,7 @@
 importScripts("https://storage.googleapis.com/workbox-cdn/releases/4.3.1/workbox-sw.js");
 
 importScripts(
-  "/hooks-snake-game/precache-manifest.e20e1a1f49612c3b26b7b626e4b4ef8c.js"
+  "/hooks-snake-game/precache-manifest.373b4331a5f55946651dd11e79f27870.js"
 );
 
 self.addEventListener('message', (event) => {
