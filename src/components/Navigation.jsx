@@ -1,24 +1,18 @@
-import React from 'react'
+import React from 'react';
+import { defaultDifficulty, Difficulty } from '../constants';
 
-const Navigation = ({
-  state,
-  canUp,
-  canDown,
-  onChangeDifficulty
-}) => {
-  const { length, difficulty } = state
-
-  const upVisiblity = canUp ? '' : 'is-hidden'
-  const downVisibilty = canDown ? '' : 'is-hidden'
-  const onUpDifficulty = () => onChangeDifficulty(1)
-  const onDownDifficulty = () => onChangeDifficulty(-1)
+const Navigation = ({ length, difficulty = defaultDifficulty, onChangeDifficulty }) => {
+  const upVisiblity = difficulty < Difficulty.length ? '' : 'is-hidden'
+  const downVisibilty = difficulty > 1 ? '' : 'is-hidden'
+  const onUpDifficulty = () => onChangeDifficulty(difficulty + 1)
+  const onDownDifficulty = () => onChangeDifficulty(difficulty -1)
   return (
     <div className="navigation">
       <div className="navigation-item">
-        <span className="navigation-label">Length: </span>
-        <div className="navigation-item-number-container">
-          <div className="num-board">{length}</div>
-        </div>
+          <span className="navigation-label">Length: </span>
+          <div className="navigation-item-number-container">
+            <div className="num-board">{length}</div>
+          </div>
       </div>
       <div className="navigation-item">
         <span className="navigation-label">Difficulty: </span>
@@ -38,6 +32,6 @@ const Navigation = ({
       </div>
     </div>
   )
-}
+};
 
-export default Navigation
+export default Navigation;

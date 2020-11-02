@@ -1,72 +1,45 @@
+import { initFields } from '../utils'
 
-const FieldSize = 35
-const DefaultDifficulty = 3
-const IntervalList = [500, 300, 100, 50, 10]
+const fieldSize = 35
+export const initialPosition = { x: 17, y: 17 }
+export const initialValues = initFields(fieldSize, initialPosition)
+export const defaultInterval = 100
+export const defaultDifficulty = 3
 
-const StatusType = {
+export const Difficulty = [1000, 500, 100, 50, 10]
+
+export const GameStatus = Object.freeze({
   init: 'init',
   playing: 'playing',
   suspended: 'suspended',
   gameover: 'gameover'
-}
+})
 
-const StatusText = {
-  init: 'START',
-  playing: 'STOP',
-  gameover: 'GAME OVER',
-  suspended: 'START'
-}
-
-const DirectionType = {
+export const Direction = Object.freeze({
   up: 'up',
-  down: 'down',
   right: 'right',
-  left: 'left'
-}
+  left: 'left',
+  down: 'down'
+})
 
-const OppositeDirectionType = {
+export const DirectionKeyCodeMap = Object.freeze({
+  37: Direction.left,
+  38: Direction.up,
+  39: Direction.right,
+  40: Direction.down,
+})
+
+export const OppositeDirection = Object.freeze({
   up: 'down',
-  down: 'up',
   right: 'left',
-  left: 'right'
-}
+  left: 'right',
+  down: 'up'
+})
 
-const DotType = {
-  none: '',
-  snake: 'snake',
-  food: 'food'
-}
+export const Delta = Object.freeze({
+  up: { x: 0, y: -1 },
+  right: { x: 1, y: 0 },
+  left: { x: -1, y: 0 },
+  down: { x: 0, y: 1 },
+})
 
-const DirectionTypeDelta = {
-  up: ({ x, y }) => ({ x, y: y - 1 }),
-  down: ({ x, y }) => ({ x, y: y + 1 }),
-  right: ({ x, y }) => ({ x: x + 1, y }),
-  left: ({ x, y }) => ({ x: x - 1, y })
-}
-
-const DirectionKeyCodeMap = {
-  37: DirectionType.left,
-  38: DirectionType.up,
-  39: DirectionType.right,
-  40: DirectionType.down
-}
-
-// へびの初期表示位置をセット
-const SnakeStartPosition = {
-  x: Math.round(FieldSize / 2) - 1,
-  y: Math.round(FieldSize / 2) - 1
-}
-
-export default {
-  FieldSize,
-  DefaultDifficulty,
-  IntervalList,
-  StatusType,
-  StatusText,
-  DirectionType,
-  OppositeDirectionType,
-  DotType,
-  DirectionTypeDelta,
-  DirectionKeyCodeMap,
-  SnakeStartPosition
-}
