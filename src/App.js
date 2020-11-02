@@ -1,50 +1,49 @@
-import React from 'react'
-import Field from './components/Field'
+import React from 'react';
 import Navigation from './components/Navigation'
-import StartButton from './components/StartButton'
-import MoveButton from './components/MoveButton'
-import useSnakeGame from './hooks'
+import Field from './components/Field'
+import Button from './components/Button'
+import ManipulationPanel from './components/ManipulationPanel'
+import useSnakeGame from './hooks/useSnakeGame'
 
-const App = () => {
-  const [state, handler, selector] = useSnakeGame()
-  const { status, fields } = state
-  const { editable, canDifficultyUp, canDifficultyDown } = selector
+function App() {
   const {
-    handleChangeDifficulty,
-    handleStart,
-    handleRestart,
-    handleStop,
-    handleChangeDirection
-  } = handler
+    body,
+    difficulty,
+    fields,
+    start,
+    stop,
+    reload,
+    status,
+    updateDirection,
+    updateDifficulty,
+  } = useSnakeGame()
 
   return (
-    <div className="app">
+    <div className="App">
       <header className="header">
         <div className="title-container">
-          <h1 className="title">SNAKE GAME</h1>
+          <h1 className="title">Snake Game</h1>
         </div>
         <Navigation
-          state={state}
-          editable={editable}
-          canUp={canDifficultyUp}
-          canDown={canDifficultyDown}
-          onChangeDifficulty={handleChangeDifficulty}
+          length={body.length}
+          difficulty={difficulty}
+          onChangeDifficulty={updateDifficulty}
         />
       </header>
       <main className="main">
         <Field fields={fields} />
       </main>
       <footer className="footer">
-        <StartButton
+        <Button
           status={status}
-          onStart={handleStart}
-          onRestart={handleRestart}
-          onStop={handleStop}
+          onStop={stop}
+          onStart={start}
+          onRestart={reload}
         />
-        <MoveButton handleChangeDirection={handleChangeDirection} />
+        <ManipulationPanel onChange={updateDirection} />
       </footer>
     </div>
-  )
+  );
 }
 
-export default App
+export default App;
